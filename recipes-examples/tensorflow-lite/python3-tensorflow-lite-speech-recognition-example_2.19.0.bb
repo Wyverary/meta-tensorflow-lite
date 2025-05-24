@@ -1,25 +1,5 @@
-DESCRIPTION = "TensorFlow Lite Standalone Pip"
-LICENSE = "Apache-2.0"
-
-LIC_FILES_CHKSUM = "file://LICENSE;md5=4158a261ca7f2525513e31ba9c50ae98"
-# Compute branch info from ${PV} as Base PV...
-BPV = "${@'.'.join(d.getVar('PV').split('.')[0:2])}"
-DPV = "${@'.'.join(d.getVar('PV').split('.')[0:3])}"
-
-SRCREV_tensorflow = "e36baa302922ea3c7131b302c2996bd2051ee5c4"
-
-SRC_URI = " \
-    git://github.com/tensorflow/tensorflow.git;name=tensorflow;branch=r${BPV};protocol=https \
-    file://001-Set-CMAKE-SYSTEM-PROCESSOR.patch \
-    file://001-Add-Wno-incompatible-pointer-types-flag-to-xnnpack.cmake.patch \
-"
-
-SRC_URI:append:riscv32 = " \
-    file://001-Disable-XNNPACK-RISC-V-Vector-micro-kernels.patch \
-    file://001-RISCV32_pthreads.patch \
-"
-
-S = "${WORKDIR}/git"
+DESCRIPTION = "TensorFlow Lite Speech Recognition demo"
+LICENSE = "MIT"
 
 DEPENDS += "\
     python3-pip-native \
@@ -83,6 +63,17 @@ EXTRA_OECMAKE:append = " \
   -DTENSORFLOW_TARGET_ARCH=${TENSORFLOW_TARGET_ARCH} \
   -DTFLITE_HOST_TOOLS_DIR=${WORKDIR}/recipe-sysroot-native/usr/bin/ \
 "
+
+SRC_URI = " \
+    git://git@github.com:ShawnHymel/tflite-speech-recognition.git;name=tflite-speech-recognition;branch=master;protocol=https \
+"
+
+RDEPENDS:${PN} += " \
+    python3-tensorflow-lite \
+    python3-pillow \
+"
+
+S = "${WORKDIR}/git"
 
 do_configure[network] = "1"
 
@@ -148,6 +139,7 @@ do_install() {
     cd "${TENSORFLOW_LITE_BUILD_DIR}"
 
     install -d ${D}/${PYTHON_SITEPACKAGES_DIR}
+    install -d ${S}/tflite-speech-recognition
 
     echo ${D}/${PYTHON_SITEPACKAGES_DIR}
 
@@ -160,4 +152,10 @@ do_install() {
 
 FILES:${PN}-dev = ""
 INSANE_SKIP:${PN} += "dev-so buildpaths"
+FILES:${PN} += "${datadir}/tflite-speech-recognition/*"
+
 FILES:${PN} += "${libdir}/* ${datadir}/*"
+
+
+
+
