@@ -37,34 +37,3 @@ IMAGE_INSTALL:append = " python3-tensorflow-lite-example"
 MACHINE=raspberrypi4-64 bitbake core-image-weston
 ```
 
-### Write image
-Write image to micro-SD card.
-
-### Boot Raspberry Pi
-Power on your Raspberry Pi.
-
-### Run example.
-Launch a terminal and run the example.
-```
-cd /usr/share/tensorflow/lite/examples/python/
-python3 label_image.py \
-  --image ./grace_hopper.bmp \
-  --model_file ./mobilenet_v1_1.0_224.tflite \
-  --label_file ./labels.txt
-```
-
-The following results can be obtained.
-```
-0.919721: 653:military uniform
-0.017762: 907:Windsor tie
-0.007507: 668:mortarboard
-0.005419: 466:bulletproof vest
-0.003828: 458:bow tie, bow-tie, bowtie
-time: 369.129ms
-```
-![label_image.py results](./image/label_image_py.png)
-
-## Code changes
-The original code imports `tensorflow`. I am changing this to import `tflite_runtime.interpreter`. This has been modified to work with TensorFlow Lite.  
-See below for changes to the original code.
-- [001-label_image_py.patch](../recipes-examples/tensorflow-lite/files/001-label_image_py.patch)
